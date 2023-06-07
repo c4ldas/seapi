@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/views/overlays/style.css">
+  <title>Overlay Sharing tool</title>
+</head>
+
+<body>
+  <%- include('partials/header') %>
+  <div class="container-button">
+    <div class="text">Overlay installed, drag this button to OBS to install it directly:</div>
+    <p><a class="obs-button" href="https://streamelements.com/overlay/<%= overlayId %>/<%= apiToken %>?layer-name=<%= overlayName %>&layer-width=<%= overlayWidth %>&layer-height=<%= overlayHeight %>" draggable="true">Drag me to OBS Studio</a></p>
+  </div>
+</body>
+</html>
