@@ -1,5 +1,5 @@
 // Home page
-// Usage: https://seapi.c4ldas.com.br
+// Usage: https://seapi.c4ldas.com.br/overlays
 // https://seapi.c4ldas.com.br/top/c4ldas?amount=5&points=true
 
 const { app, axios, db } = require('./app');
