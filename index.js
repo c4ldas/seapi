@@ -1,7 +1,6 @@
 // Home page
 // Usage: https://seapi.c4ldas.com.br
 // https://seapi.c4ldas.com.br/top/c4ldas?amount=5&points=true
-// https://seapi.c4ldas.com.br/botMessage/c4ldas?msg=MESSAGE
 
 const { app, axios, db } = require('./app');
 const { style, helloPage, topUsers, activateItemStore, loginButton, overlaysButton, unauthorizedPage } = require('./pageItems')
@@ -37,12 +36,6 @@ app.get('/login', async (req, res) => {
     })
   )
 })
-
-// Database operations
-// app.get('/database/:operation/:id', async (req, res) => {
-//   const dbRequest = await databaseOperation(req.params.operation, req.params.id)
-//   res.status(200).json(dbRequest)
-// })
 
 // Accessing the overlay page
 app.get('/overlays', async (req, res) => {
