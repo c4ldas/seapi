@@ -6,6 +6,14 @@ html {
   font-family: AgencyFB, sans-serif;
 }
 
+@font-face {
+  font-family: 'AgencyFB';
+  src: url('/fonts/Agencyr.woff2') format('woff'); 
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 .container {
   display: flex;
   align-items: center;
@@ -140,27 +148,18 @@ a {
   gap: 20px; 
 } 
 
-.overlay-code {
+.text-code {
   width: 23rem;
-  height: 6rem;
+  height: 6rem;  
   font-size: 1.5rem;
-  text-align: center;
-  text-align: -moz-center;
-  text-align: -webkit-center;
+  text-align: center;  
   background-color: #fafafa;
-  padding: 0px;
+  padding: 0px;    
 }
 
-.overlay-share-code {
+.pointer {
   cursor: pointer;
-  caret-color: transparent;
-  width: 23rem;
-  height: 6rem;
-  font-size: 1.5rem;
-  text-align: center;
-  color: black;
-  background-color: #fafafa;
-  padding: 0px;  
+  caret-color: transparent;  
 }
 
 .invalid {
@@ -174,10 +173,6 @@ a {
   display: none;
 }
 
-@font-face {
-  font-family: 'AgencyFB';
-  src: url('https://seapi.c4ldas.com.br/fonts/Agencyr.woff2') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+.italic {
+  font-style: oblique;
 }
