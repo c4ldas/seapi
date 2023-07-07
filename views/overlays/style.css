@@ -176,8 +176,6 @@ a {
 
 @font-face {
   font-family: 'AgencyFB';
-  /* src: url('https://seapi.c4ldas.com.br/fonts/Agencyr.ttf') format('truetype'); */
-  /* src: url('https://seapi.c4ldas.com.br/fonts/Agencyr.otf') format('opentype'); */
   src: url('https://seapi.c4ldas.com.br/fonts/Agencyr.woff2') format('woff');
   font-weight: 400;
   font-style: normal;
