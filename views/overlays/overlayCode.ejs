@@ -13,15 +13,14 @@
   <%- include('partials/header') %>
   <div class="container-code">
     <!-- <div id="description" class="text">Input the overlay code</div> -->
-    <input type="text" id="overlay-code" class="overlay-code" placeholder="Insert the overlay code here"/>
+    <input type="text" id="overlay-code" class="text-code" placeholder="Insert the overlay code here"/>
     <button type="submit" id="submit" class="button">Install Overlay</button>
   </div>
   <div>
     <p id="no-code" class="invalid no-code">Please insert the code!</p>
     <% if(isValid == false){ %>
     <p class="invalid">Code not found! Check if the code is correct and make sure it has not been used already.</p>
-    <% } %>
-    
+    <% } %>    
   </div>
 </body>
 <script>
