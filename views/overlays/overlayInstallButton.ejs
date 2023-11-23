@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/views/overlays/style.css">
+  <title>Overlay Sharing tool</title>
+</head>
+
+<body>
+  <%- include('partials/header') %>
+  <div class="container-button">
+    <div class="text">Overlay installed, drag this button to OBS to install it directly:</div>
+    <p>
+      <a class="obs-button" href="https://streamelements.com/overlay/<%= overlayId %>/<%= apiToken %>?layer-name=<%= overlayName %>&layer-width=<%= overlayWidth %>&layer-height=<%= overlayHeight %>" draggable="true">Drag me to OBS Studio</a>
+    </p>
+    <p>
+    <div class="text">Alternatively, you can copy and paste the URL below to your OBS as a new browser source:</div>
+    <div class="container-code">    
+      <input type="text" id="url" class="text-code pointer italic" placeholder="https://streamelements.com/overlay/<%= overlayId %>/<%= apiToken %>" />
+      <div class="tooltip"><button type="submit" id="submit" class="button">Copy URL</button></div>
+    </div>
+  </p>
+  </div>
+</body>
+<script>
+  const url = document.querySelector('#url')
+  const submit = document.querySelector('#submit')
+
+  url.addEventListener('click', copyText)  
+  submit.addEventListener('click', copyText)  
+
+  async function copyText() {
+    console.log(url.placeholder)
+    url.select();
+    url.setSelectionRange(0, 99999)
+    
+    navigator.clipboard.writeText(url.placeholder)
+    submit.innerText = "URL copied to clipboard!"
+    
+    setTimeout( () => {
+      submit.innerText = "Copy URL"
+    }, 5000)
+  }
+</script>
+</html>

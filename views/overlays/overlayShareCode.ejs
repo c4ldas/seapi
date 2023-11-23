@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/views/overlays/style.css">
+  <title>Overlay Sharing tool</title>
+</head>
+
+<body>
+  <%- include('partials/header') %>
+  <div id="description" class="description">Click the "Copy Code" button to copy the code</div>
+  <div class="container-code">
+    <input type="text" id="overlay-share-code" class="text-code pointer" placeholder="<%= code %>" />
+    <div class="tooltip"><button type="submit" id="submit" class="button">Copy Code</button></div>
+  </div>
+  <div id="description" class="description">
+    <p>Share this code with your friend and ask them to go to "Install Overlay" page to install the overlay in their account.</p>
+    <p>This code is valid only once, in case you want to share with more friends, you need to generate a new code</p>
+  </div>
+</body>
+<script>
+  const overlayShareCode = document.querySelector('#overlay-share-code')
+  const submit = document.querySelector('#submit')
+
+  overlayShareCode.addEventListener('click', copyText)  
+  submit.addEventListener('click', copyText)  
+
+  async function copyText() {
+    console.log(overlayShareCode.placeholder)
+    overlayShareCode.select();
+    overlayShareCode.setSelectionRange(0, 99999)
+    
+    navigator.clipboard.writeText(overlayShareCode.placeholder)
+    submit.innerText = "Code copied to clipboard!"
+    
+    setTimeout( () => {
+      submit.innerText = "Copy Code"
+    }, 5000)
+  }
+</script>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/views/overlays/style.css">
+  <title>Overlay Sharing tool</title>
+</head>
+
+<body>
+  <%- include('partials/header') %>
+  <div class="container-code">
+    <!-- <div id="description" class="text">Input the overlay code</div> -->
+    <input type="text" id="overlay-code" class="text-code" placeholder="Insert the overlay code here"/>
+    <button type="submit" id="submit" class="button">Install Overlay</button>
+  </div>
+  <div>
+    <p id="no-code" class="invalid no-code">Please insert the code!</p>
+    <% if(isValid == false){ %>
+    <p class="invalid">Code not found! Check if the code is correct and make sure it has not been used already.</p>
+    <% } %>    
+  </div>
+</body>
+<script>
+  const code = document.querySelector('#overlay-code')
+  const submit = document.querySelector('#submit')
+
+  submit.addEventListener('click', (event) => {
+    console.log(code.value)
+    event.preventDefault()
+    if(code.value == ''){
+      document.querySelector('#no-code').style.display = 'flex'
+      return
+    }
+    window.location.href = `/overlays/install/${code.value}`
+  })
+</script>
+</html>

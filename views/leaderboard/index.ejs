@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preload" href="/fonts/Agencyr.woff2" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="/views/overlays/style.css">
+  <script src="/views/leaderboard/index.js" defer></script>
+  
+  <!-- Primary Meta Tags -->
+  <title>Streamelements Leaderboard CSV download - by c4ldas</title>
+  <meta name="title" content="Streamelements Leaderboard CSV download - by c4ldas" />
+  <meta name="description" content="Export Streamelements points in CSV format!" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://seapi.c4ldas.com.br/leaderboard" />
+  <meta property="og:title" content="Streamelements Leaderboard CSV download - by c4ldas" />
+  <meta property="og:description" content="Export Streamelements points in CSV format!" />
+  <meta property="og:image" content="https://c4ldas.com.br/images/seapi-leaderboard-cover.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://seapi.c4ldas.com.br/leaderboard" />
+  <meta property="twitter:title" content="Streamelements Leaderboard CSV download - by c4ldas" />
+  <meta property="twitter:description" content="Export Streamelements points in CSV format!" />
+  <meta property="twitter:image" content="https://c4ldas.com.br/images/seapi-leaderboard-cover.png" />
+  <!-- Meta Tags Generated with https://metatags.io -->
+
+  
+  <title>Streamelements Leaderboard CSV download</title>
+</head>
+
+<body>
+  <%- include('../overlays/partials/header') %>
+  <div class="container-leaderboard" id="container-leaderboard">
+    <div id="title" class="title">Streamelements Leaderboard CSV download</div>
+    <input type="text" id="username" class="text-username" placeholder="Type your username here"></input>
+
+    <label class="form-control">
+      <input type="radio" id="top-type" class="radio" name="type" value="top">
+      <!-- <label for="top-type" class="text">Top</label><br> -->
+      Top (default)
+    </label>
+
+    <div id="hidden" class="hidden">
+      <input type="text" id="limit" placeholder="Amount (max. 1000)"></input>
+      <input type="text" id="offset" placeholder="Offset"></input>
+    </div>
+      
+    <label class="form-control">
+      <input type="radio" id="alltime-type" class="radio" name="type" value="alltime">
+      <!-- <label for="alltime-type" class="text">Alltime</label><br> --> 
+      Alltime
+    </label>    
+
+
+    <button type="submit" id="download" class="button">Download list</button>
+    <div id="error-message" class="error-message"></div>
+  </div>
+</body>
+
+</html>
