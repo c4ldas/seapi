@@ -48,6 +48,12 @@ app.get('/database/:operation/:id', async (req, res) => {
   res.status(200).json(dbRequest)
 })
 
+// Get the overlay code
+app.get('/overlays/get/:id', async (req, res) => {
+  const dbRequest = await databaseOperation("get", req.params.id)
+  res.status(200).json(dbRequest)
+})
+
 // Accessing the overlay page
 app.get('/overlays', async (req, res) => {
   res.status(200).render('overlays/index')
