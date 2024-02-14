@@ -162,6 +162,7 @@ app.get('/top/:username', async (req, res) => {
 
   const points = req.query.points || false
   const amount = req.query.amount;
+  const order = req.query.order || 'asc'
   const accountId = await getAccountId(req.params.username);
 
   if (amount < 1 || amount > 1000) {
@@ -175,9 +176,11 @@ app.get('/top/:username', async (req, res) => {
     return
   }
 
-  const topUser = await getTopLeaderboard(accountId, amount, points)
-  console.log(`${new Date().toLocaleTimeString('en-UK')} - Channel: ${req.params.username} - Users: ${topUser}`)
-  res.status(200).send(`${topUser}`)
+  const userList = await getTopLeaderboard(accountId, amount, points)
+  order == 'desc' ? topUsers = userList.reverse().join(', ') : topUsers = userList.join(', ')
+  
+  console.log(`${new Date().toLocaleTimeString('en-UK')} - Channel: ${req.params.username} - Users: ${topUsers}`)
+  res.status(200).send(topUsers)
 })
 
 
@@ -347,8 +350,9 @@ async function getTopLeaderboard(accountId, amount = 1, points) {
         totalUsers.push(`${element.username}`)
       }
     })
-    const topUsernames = totalUsers.join(', ')
-    return topUsernames
+    return totalUsers
+    // const topUsernames = totalUsers.join(', ')
+    // return topUsernames
 
   } catch (error) {
     console.log(error.response.data)
@@ -379,7 +383,7 @@ async function getTopWatchtime(accountId, amount = 1, minutes) {
         totalUsers.push(`${element.username}`)
       }
     })
-    const topUsernames = totalUsers.join(', ')
+    const topUsernames = totalUsers.join(',')
     return topUsernames
 
   } catch (error) {
