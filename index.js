@@ -3,7 +3,7 @@
 // https://seapi.c4ldas.com.br/top/c4ldas?amount=5&points=true
 // https://seapi.c4ldas.com.br/botMessage/c4ldas?msg=MESSAGE
 
-const { app, axios, db } = require('./app');
+const { app, db } = require('./app');
 const { style, unauthorizedPage } = require('./pageItems')
 const { seURL, seClientID, seClientSecret, seRedirectURI, seScopes } = require('./environment')
 
@@ -16,11 +16,9 @@ app.get('/', async (req, res) => {
   res.redirect('/overlays')
 })
 
-
 // Answering to the ping from other repo just to keep this repo awake
 app.get('/ping', async (req, res) => {
   res.status(200).json({ status: 'success' })
-  /* console.log({ date: new Date().toLocaleTimeString('en-UK'), status: 'success' }) */
 })
 
 // Login page to authenticate to StreamElements
@@ -73,7 +71,6 @@ app.get('/overlays/share/:accountId/:id', async (req, res) => {
 
   const response = await getOverlayConfig(accountId, overlayId)
   res.status(200).render('./overlays/overlayShareCode.ejs', { code: response })
-  // res.status(200).send(response.toString())
 })
 
 // Open page asking for overlay code to be installed
@@ -216,16 +213,19 @@ app.get('/watchtime/:username', async (req, res) => {
 
 // Overlay List
 async function overlayList(data, channelData) {
-  const overlayFetch = await axios.get(`https://api.streamelements.com/kappa/v2/overlays/${channelData._id}`, {
-    headers: {
-      Accept: 'application/json',
-      Authorization: `oAuth ${data.access_token}`
+  const overlayFetch = await fetch(`https://api.streamelements.com/kappa/v2/overlays/${channelData._id}`, {
+    "method": "GET",
+    "headers": {
+      "Accept": "application/json",
+      "Authorization": `oAuth ${data.access_token}`
     }
-  })
+  });
+  const response = await overlayFetch.json();
+  
   // Generate a grid with all overlays from that user. 
   // The overlay list has the name and the background image of each one
-  overlayArray = []
-  overlayFetch.data.docs.forEach(element => {
+  overlayArray = []; 
+  response.docs.forEach(element => {
     overlayArray.push(`
           <div class="wrapper">
             <div class="item-name">${element.name}</div>
@@ -241,74 +241,82 @@ async function overlayList(data, channelData) {
 
 // Overlay Share - Generate code
 async function getOverlayConfig(accountId, overlayId) {
-  const accountIdDatabase = await db.get(accountId)
-  const token = accountIdDatabase.access_token
-  accountIdDatabase.code = Date.now()
+  const accountIdDatabase = await db.get(accountId);
+  const token = accountIdDatabase.access_token;
+  accountIdDatabase.code = Date.now();
 
-  const { data } = await axios.get(`https://api.streamelements.com/kappa/v2/overlays/${accountId}/${overlayId}`, {
-    headers: {
-      Accept: 'application/json',
-      Authorization: `oAuth ${token}`
+  const getOverlayFetch = await fetch(`https://api.streamelements.com/kappa/v2/overlays/${accountId}/${overlayId}`, {
+    "method": "GET",
+    "headers": {
+      "Accept": "application/json",
+      "Authorization": `oAuth ${token}`
     }
-  })
+  });
+  const data = await getOverlayFetch.json();
+  
   // Create database entry for overlay code and delete Account ID from database after code generated
-  await db.set(accountIdDatabase.code, data)
-  await db.delete(accountId).then(() => { console.log('Account ID deleted from database') })
+  await db.set(accountIdDatabase.code, data);
+  await db.delete(accountId).then(() => { console.log('Account ID deleted from database') });
 
-  return accountIdDatabase.code
+  return accountIdDatabase.code;
 }
 
 // Overlay installation - Add overlay to SE destination account
 async function overlayInstallation(tokenInfo, channelData, code) {
-  const overlayData = await db.get(code)
+  const overlayData = await db.get(code);
 
   if (!overlayData) {
     return { isValid: false, overlayId: null, apiToken: null, overlayName: null, overlayWidth: null, overlayheight: null }
   }
 
-  const { data } = await axios.post(`https://api.streamelements.com/kappa/v2/overlays/${channelData._id}`,
-    overlayData,
-    {
-      headers: {
-        Accept: 'application/json',
-        Authorization: `oAuth ${tokenInfo.access_token}`
-      }
-    })
+  const overlayInstallFetch = await fetch(`https://api.streamelements.com/kappa/v2/overlays/${channelData._id}`, {
+    "method": "POST",
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": `oAuth ${tokenInfo.access_token}`
+    },
+    "body": JSON.stringify(overlayData)
+  });
+  const data = await overlayInstallFetch.json();
 
-  //URL format:
+  // URL format:
   // https://streamelements.com/overlay/data._id/channelData.apiToken
   return {
     isValid: true, overlayId: data._id, apiToken: channelData.apiToken, overlayName: data.name,
     overlayWidth: data.settings.width, overlayHeight: data.settings.height
   }
-
 }
 
 // Get Authentication token
 async function getAuthentication(code) {
-  const { data } = await axios.post('https://api.streamelements.com/oauth2/token?' +
-    new URLSearchParams({
-      'client_id': seClientID,
-      'client_secret': seClientSecret,
-      'grant_type': 'authorization_code',
-      'code': code,
-      'redirect_uri': seRedirectURI
-    })
-  );
-  console.log('Get Authentication: ', data)
-  return data
+  const searchParams = new URLSearchParams({
+    "client_id": seClientID,
+    "client_secret": seClientSecret,
+    "grant_type": "authorization_code",
+    "code": code,
+    "redirect_uri": seRedirectURI
+  });
+  
+  const authenticationFetch = await fetch(`https://api.streamelements.com/oauth2/token?${searchParams.toString()}`, {
+    "method": "POST"
+  });
+  const data = await authenticationFetch.json();
+  return data;
 }
 
 // Get channel information
 async function getChannelData(tokenInfo) {
-  const { data } = await axios.get('https://api.streamelements.com/kappa/v2/channels/me', {
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `oAuth ${tokenInfo.access_token}`
+  const channelDataFetch = await fetch('https://api.streamelements.com/kappa/v2/channels/me', {
+    "method": "GET",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": `oAuth ${tokenInfo.access_token}`
     }
-  })
-  // console.log('Get Channel Information: ', data)
+  });
+  const data = await channelDataFetch.json();
+  
   db.set(data._id, { username: data.username, access_token: tokenInfo.access_token, refresh_token: tokenInfo.refresh_token })
   return data
 }
@@ -316,17 +324,19 @@ async function getChannelData(tokenInfo) {
 // Get Account ID from username
 async function getAccountId(username) {
   try {
-    const accountIdRequest = await axios.get(`${seURL}/v2/channels/${username}`, {
-      timeout: 1000,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+    const accountIdRequest = await fetch(`${seURL}/v2/channels/${username}`, {
+      "method": "GET",
+      "headers": {
+        "Accept": "application/json",
+        "Content-Type": "applicadtion/json"
       }
-    })
-    const accountId = await accountIdRequest.data._id
-    return accountId
+    });
+    const accountIdResponse = await accountIdRequest.json();
+    const accountId = accountIdResponse._id;
+    return accountId;
+
   } catch (error) {
-    console.log('Error getting account ID: ', error.response.data)
+    console.log('Error getting account ID: ', error)
     return { error: error.response.data.message, code: error.response.data.statusCode }
   }
 }
@@ -334,30 +344,34 @@ async function getAccountId(username) {
 // Get top leaderboard users based on account ID
 async function getTopLeaderboard(accountId, amount = 1, points) {
   try {
-    const topUsernameRequest = await axios.get(`${seURL}/v2/points/${accountId}/top?limit=${amount}&offset=0`, {
-      timeout: 1000,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+    const topUsernameRequest = await fetch(`${seURL}/v2/points/${accountId}/top?limit=${amount}&offset=0`, {
+      "method": "GET",
+      "headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
       }
-    })
+    });
 
-    const usersArray = await topUsernameRequest.data.users
-    const totalUsers = []
+    const topUsernames = await topUsernameRequest.json();
+    const usersArray = await topUsernames.users;
+    const totalUsers = [];
 
     usersArray.forEach((element, index) => {
       if (points == 'true') {
-        totalUsers.push(`${index + 1}. ${element.username} (${element.points})`)
+        totalUsers.push(`${index + 1}. ${element.username} (${element.points})`);
       } else {
-        totalUsers.push(`${element.username}`)
+        totalUsers.push(`${element.username}`);
       }
     })
-    return totalUsers
+    return totalUsers;
     // const topUsernames = totalUsers.join(', ')
     // return topUsernames
 
   } catch (error) {
-    console.log(error.response.data)
+    console.log(error);
+    ////////////////////////////////////////////////////////////////////////////////////
+    /////////// Check this error object ////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
     return { error: error.response.data.message, code: error.response.data.statusCode }
   }
 }
@@ -366,16 +380,17 @@ async function getTopLeaderboard(accountId, amount = 1, points) {
 // Get top watchtime users based on account ID
 async function getTopWatchtime(accountId, amount = 1, minutes) {
   try {
-    const topWatchtimeRequest = await axios.get(`${seURL}/v2/points/${accountId}/watchtime?limit=${amount}&offset=0`, {
-      timeout: 1000,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+    const topWatchtimeRequest = await fetch(`${seURL}/v2/points/${accountId}/watchtime?limit=${amount}&offset=0`, {
+      "method": "GET",
+      "headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
       }
-    })
-
-    const usersArray = await topWatchtimeRequest.data.users
-    const totalUsers = []
+    });
+    const data = await topWatchtimeRequest.json();
+    // console.log("Line 440:", data);
+    const usersArray = data.users;
+    const totalUsers = [];
 
     usersArray.forEach((element, index) => {
       if (minutes == 'true') {
@@ -389,7 +404,10 @@ async function getTopWatchtime(accountId, amount = 1, minutes) {
     return topUsernames
 
   } catch (error) {
-    console.log(error.response.data)
+    console.log(error);
+    ////////////////////////////////////////////////////////////////////////////////////
+    /////////// Check this error object ////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
     return { error: error.response.data.message, code: error.response.data.statusCode }
   }
 }

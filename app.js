@@ -1,4 +1,3 @@
-const axios = require('axios').default
 const cors = require('cors')
 const session = require('express-session')
 const express = require('express')
@@ -20,4 +19,4 @@ app.use(session({
 // botMessage
 app.use('/botMessage', require('./botMessage'));
 
-module.exports = { axios, app, db }
+module.exports = { app, db }
