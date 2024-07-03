@@ -459,7 +459,7 @@ async function databaseOperation(operation, id) {
 const listener = app.listen(process.env.PORT, () => {
   console.clear();
   if (!process.env.REPLIT_DEPLOYMENT) {
-    console.log("URL: https://90a179b2-2d37-4b81-86f1-799af7d1164d-00-3mynl3lnoqln2.kirk.replit.dev/");
     console.log("Listening on port " + listener.address().port);
+    console.log(`Dev URL: \nhttps://${process.env.REPLIT_DEV_DOMAIN}`);    
   }
 });
