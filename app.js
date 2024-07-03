@@ -18,7 +18,6 @@ app.use(session({
 }))
 
 // botMessage
-app.use('/botMessage', require('./botMessage'))
+app.use('/botMessage', require('./botMessage'));
 
 module.exports = { axios, app, db }
-

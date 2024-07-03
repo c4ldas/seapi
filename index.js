@@ -7,14 +7,15 @@ const { app, axios, db } = require('./app');
 const { style, unauthorizedPage } = require('./pageItems')
 const { seURL, seClientID, seClientSecret, seRedirectURI, seScopes } = require('./environment')
 
-/*************************************************
+/************************************************/
 //                   Routes                     //
-*************************************************/
+/************************************************/
 
 // Home page. The variables are in environment.js file
 app.get('/', async (req, res) => {
   res.redirect('/overlays')
 })
+
 
 // Answering to the ping from other repo just to keep this repo awake
 app.get('/ping', async (req, res) => {
@@ -96,6 +97,8 @@ app.get('/overlays/install/:id', async (req, res) => {
 
 // Callback page
 app.get('/callback', async (req, res) => {
+/*    res.redirect(`https://07ca676f-db02-4e91-9d12-82451cd9db5a-00-1ksatjfb1w4wl.worf.replit.dev/overlays/callback?code=${req.query.code}&state=${req.query.state}`)
+  return  */
 
   // In case the user does not authorize the application, send an error message
   if (!req.query.code || req.query.error) {
@@ -126,11 +129,13 @@ app.get('/callback', async (req, res) => {
       const code = req.session['code']
       const result = await overlayInstallation(data, channelData, code)
       const { overlayId, apiToken, overlayName, overlayWidth, overlayHeight } = result
-      res.status(200).render('./overlays/overlayInstallButton.ejs', { overlayId, apiToken, overlayName, overlayWidth, overlayHeight })
 
       // After overlay is installed, remove Account ID and Overlay code from database
       db.delete(code).then(() => { console.log('Code removed from database!') })
       db.delete(channelData._id).then(() => { console.log('Account ID removed from database!') })
+
+      // Render the page
+      res.status(200).render('./overlays/overlayInstallButton.ejs', { overlayId, apiToken, overlayName, overlayWidth, overlayHeight })
       return
     }
 
@@ -182,7 +187,6 @@ app.get('/top/:username', async (req, res) => {
   console.log(`${new Date().toLocaleTimeString('en-UK')} - Channel: ${req.params.username} - Users: ${topUsers}`)
   res.status(200).send(topUsers)
 })
-
 
 // Getting the top watchtime on Streamelements leaderboard
 // Usage: https://seapi.c4ldas.com.br/watchtime/c4ldas?amount=5
@@ -435,6 +439,10 @@ async function databaseOperation(operation, id) {
   return request
 }
 
-
-// Starting application
-app.listen(8800, () => console.log('listening'))
+// Starting server
+const listener = app.listen(process.env.PORT, () => {
+  if (!process.env.REPLIT_DEPLOYMENT) {
+    console.log("URL: https://90a179b2-2d37-4b81-86f1-799af7d1164d-00-3mynl3lnoqln2.kirk.replit.dev/")
+    console.log("Listening on port " + listener.address().port);
+  }
+});
