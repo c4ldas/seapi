@@ -58,8 +58,6 @@ app.get('/overlays/get/:id', async (req, res) => {
 // Accessing the overlay page
 app.get('/overlays', async (req, res) => {
   res.status(200).render('overlays/index')
-  // Getting overlay codes available
-  console.log(`${new Date().toLocaleTimeString('en-UK')} - DB List:`, await db.list())
 })
 
 // List overlays
