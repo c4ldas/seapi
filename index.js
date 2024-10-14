@@ -91,7 +91,7 @@ app.get('/overlays/install/:id', async (req, res) => {
 })
 
 // Callback page
-app.get('/callback', async (req, res) => {
+app.get('/api/callback', async (req, res) => {
 /*    res.redirect(`https://07ca676f-db02-4e91-9d12-82451cd9db5a-00-1ksatjfb1w4wl.worf.replit.dev/overlays/callback?code=${req.query.code}&state=${req.query.state}`)
   return  */
 
