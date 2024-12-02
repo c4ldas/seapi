@@ -47,6 +47,21 @@ app.get('/database/:operation/:id', async (req, res) => {
   res.status(200).json(dbRequest)
 })
 
+// List all keys
+// app.get('/database/list', async (req, res) => {
+//   let array = [];
+//   const dbRequest = await db.list();
+//   
+//   const response = await Promise.all(
+//     dbRequest.map(async (entry, index) => {
+//       // if (index > 2) return; 
+//       let body = await db.get(entry)
+//       return {[entry]:body};
+//     })
+//   );
+//   res.status(200).send(response.filter(Boolean));
+// })
+
 // Get the overlay code
 app.get('/overlays/get/:id', async (req, res) => {
   const dbRequest = await databaseOperation("get", req.params.id)
